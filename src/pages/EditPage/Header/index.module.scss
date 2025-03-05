@@ -1,0 +1,23 @@
+.edit-header-container {
+  display: flex;
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  color: #ffffff;
+  font-size: 1.1em;
+  font-weight: 550;
+  background-color: #4e95c7;
+  .edit-header-item {
+    flex-grow: 1;
+    line-height: 64px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      background-color: #3778a1; 
+    }
+  }
+}

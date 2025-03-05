@@ -1,0 +1,60 @@
+.resizer {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  z-index: 11;
+  background-color: #2ba5fd;
+}
+
+.top-left {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize;
+}
+
+.top-right {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize;
+}
+
+.bottom-left {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize;
+}
+
+.bottom-right {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize;
+}
+
+.top-middle {
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.bottom-middle {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.left-middle {
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.right-middle {
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}

@@ -1,0 +1,29 @@
+.zoom-box {
+  position: fixed;
+  bottom: 30px;
+  right: 250px;
+  width: 100px;
+  z-index: 50;
+  padding: 0 10px 0 10px;
+}
+
+.btn {
+  position: absolute;
+  top: 50%;
+  width: 1.2em;
+  height: 1.2em;
+  text-align: center;
+  color: #989898;
+  font-size: 1.5em;
+  font-weight: 600;
+  line-height: 40px;
+  line-height: 1em;
+  cursor: pointer;
+  background-color: #ffffff;
+  border-radius: 50%;
+  user-select: none;
+  &:hover {
+    outline: solid 1px #2ba5fd;
+    color: #2ba5fd;
+  }
+}
