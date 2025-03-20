@@ -3,7 +3,7 @@ import { CompTypes } from "@/store/editStore";
 import type { IComp, CompStyle } from "@/store/editStore/types";
 import styles from "./leftSider.module.scss";
 import classNames from "classnames";
-import { addComp } from "@/store/editStore";
+import useEditStore from "@/store/editStore";
 import emojiUrl from "@/assets/imgs/emoji.jpg";
 import garyUrl from "@/assets/imgs/gary.jpg";
 import cityUrl from "@/assets/imgs/city.jpg";
@@ -48,7 +48,7 @@ const comps: IComp[] = [
 ]
 
 const ImgSider: React.FC = () => {
-    // const addComp = useEditStore((state) => state.addComp)
+    const addComp = useEditStore((state) => state.addComp)
     const onCompDragStart = (e: React.DragEvent<HTMLElement>, data: {
         type: number,
         value?: string,

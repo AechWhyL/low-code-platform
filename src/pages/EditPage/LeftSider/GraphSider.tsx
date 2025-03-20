@@ -3,7 +3,7 @@ import { CompTypes } from "@/store/editStore";
 import type { IComp, CompStyle } from "@/store/editStore/types";
 import styles from "./leftSider.module.scss";
 import classNames from "classnames";
-import { addComp } from "@/store/editStore";
+import useEditStore from "@/store/editStore";
 
 const sideClass = styles['side-template']
 const compsClass = styles['comps']
@@ -60,7 +60,7 @@ const comps: IComp[] = [
 ]
 
 const GraphSider: React.FC = () => {
-    // const addComp = useEditStore((state) => state.addComp)
+    const addComp = useEditStore((state) => state.addComp)
     const onCompDragStart = (e: React.DragEvent<HTMLElement>, data: {
         type: number,
         value?: string,

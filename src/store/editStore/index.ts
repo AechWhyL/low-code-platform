@@ -8,9 +8,9 @@ import type {
   EditStoreState,
   EditStoreAction,
   ICanvas,
-  IComp,
   CompStyle,
 } from "./types";
+import { debounce } from "lodash-es";
 
 const getDefaultCanvas = (): ICanvas => {
   return {
@@ -37,13 +37,27 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
     maxHistory: 100,
     historyIndex: 0,
     history: [{ canvas: getDefaultCanvas(), seletedIndexs: new Set() }],
-    debounceHistoryTemp: null,
-    
+
+    addComp: (comp) => {
+      set((draft) => {
+        draft.canvas.comps.push({
+          ...comp,
+          key: getUniqueKey(),
+          style: {
+            ...comp.style,
+            zIndex: draft.canvas.comps.length,
+          },
+        });
+        draft.selectedIndexs.add(draft.canvas.comps.length - 1);
+        addCanvasHistory();
+      });
+    },
+
     clearCanvas: () => {
       set((draft) => {
         draft.canvas = getDefaultCanvas();
         draft.selectedIndexs.clear();
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
 
@@ -63,7 +77,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
             draft.selectedIndexs.add(index);
           }
         });
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
 
@@ -74,7 +88,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
           comp.style.left! += x;
           comp.style.top! += y;
         });
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
 
@@ -89,7 +103,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
           comp.style.left += vector.leftDiff;
           comp.style.top += vector.topDiff;
         });
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
 
@@ -110,7 +124,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
             };
           });
         }
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
     updateCanvas(title, newStyle) {
@@ -124,7 +138,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
             ...newStyle,
           };
         }
-        addCanvasHistory(draft);
+        addCanvasHistory();
       });
     },
   }))
@@ -134,24 +148,11 @@ export const undoCanvas = () => {
   useEditStore.setState((draft) => undo(draft));
 };
 
-export const addComp = (comp: IComp) => {
+export const addCanvasHistory = debounce(() => {
   useEditStore.setState((draft) => {
-    draft.canvas.comps.push({
-      ...comp,
-      key: getUniqueKey(),
-      style: {
-        ...comp.style,
-        zIndex: draft.canvas.comps.length,
-      },
-    });
-    draft.selectedIndexs.add(draft.canvas.comps.length - 1);
-    addCanvasHistory(draft);
+    addHistory(draft);
   });
-};
-
-export const addCanvasHistory = (draft: EditStoreState) => {
-  addHistory(draft);
-};
+}, 500);
 
 export const redoCanvas = () => {
   useEditStore.setState((draft) => redo(draft));

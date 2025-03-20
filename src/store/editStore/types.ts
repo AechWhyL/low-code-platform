@@ -35,14 +35,13 @@ export type EditStoreState = {
   maxHistory: number;
   history: Array<{ canvas: ICanvas; seletedIndexs: Set<number> }>;
   historyIndex: number;
-  debounceHistoryTemp: null | NodeJS.Timeout;
 };
 
 export type AddCompFC = (comp: IComp) => void;
 
 // 画布action
 export type EditStoreAction = {
-
+  addComp: AddCompFC;
   clearCanvas: () => void;
   setCompSelected: (clear: boolean, ...indexes: number[]) => void;
   moveCompByDistance: (x: number, y: number) => void;

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./leftSider.module.scss";
-import { addComp } from "@/store/editStore";
+import useEditStore from "@/store/editStore";
 import { CompTypes } from "@/store/editStore";
 import type { CompStyle, IComp } from "@/store/editStore/types";
 
@@ -48,6 +48,7 @@ const comps: IComp[] = [
     },
 ]
 const TextSide: React.FC = ({ }) => {
+    const addComp = useEditStore((state) => state.addComp)
     const onCompDragStart = (e: React.DragEvent<HTMLElement>, data: {
         type: number,
         value?: string,
