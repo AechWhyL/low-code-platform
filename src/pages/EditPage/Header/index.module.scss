@@ -10,14 +10,21 @@
   font-size: 1.1em;
   font-weight: 550;
   background-color: #4e95c7;
+
   .edit-header-item {
     flex-grow: 1;
-    line-height: 64px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+
     &:hover {
-      background-color: #3778a1; 
+      background-color: #3778a1;
+    }
+    .shortcut {
+      color: #dbdbdb;
     }
   }
 }

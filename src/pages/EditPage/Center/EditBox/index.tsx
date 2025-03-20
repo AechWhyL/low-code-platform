@@ -95,6 +95,7 @@ const EditBox: React.FC = () => {
                         left: gap,
                         top: gap,
                         position: 'absolute',
+                        
                         zIndex: 10000,
                         fontFamily: 'inherit',
 

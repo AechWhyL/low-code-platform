@@ -10,6 +10,7 @@ import cityUrl from "@/assets/imgs/city.jpg";
 
 const sideClass = styles['side-template']
 const compsClass = styles['comps']
+const compContainerClass = styles['comp-container']
 const compClass = styles['comp']
 const imgCompClass = styles['img-comp']
 const compDraggingClass = styles['comp-dragging']
@@ -67,7 +68,7 @@ const ImgSider: React.FC = () => {
                     return (
                         <li
                             key={index}
-                            className={classNames(compClass, imgCompClass)}
+                            className={classNames(compContainerClass, imgCompClass)}
                             draggable
                             onDragStart={(e) => onCompDragStart(e, comp)}
                             onDragEnd={onCompDragEnd}
@@ -75,7 +76,9 @@ const ImgSider: React.FC = () => {
                                 ...comp
                             })}
                         >
-                            <img src={comp.value} alt="图片组件" />
+                            <div className={compClass}>
+                                <img src={comp.value} alt="图片组件" />
+                            </div>
                         </li>
                     )
                 })}

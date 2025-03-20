@@ -1,7 +1,7 @@
 import React from "react";
 import Canvas from "./Canvas";
 import styles from "./index.module.scss";
-import useEditStore from "@/store/editStore";
+import useEditStore, { undoCanvas, redoCanvas } from "@/store/editStore";
 import Zoom from "./Zoom";
 import useZoomStore from "@/store/zoomStore";
 
@@ -26,6 +26,14 @@ const Center: React.FC = () => {
             case "Minus":
                 zoomOut()
                 break;
+            case "KeyZ":
+                if (e.shiftKey) {
+                    redoCanvas()
+                } else {
+                    undoCanvas()
+                }
+                break;
+
         }
     }
     return (

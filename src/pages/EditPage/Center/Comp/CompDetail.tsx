@@ -3,7 +3,7 @@ import type { IComp } from "@/store/editStore/types";
 
 export const TextComp: React.FC<IComp> = (props: IComp) => {
     return (
-        <span style={props.style}>{props.value}</span>
+        <div style={props.style}>{props.value}</div>
     )
 }
 

@@ -7,6 +7,7 @@ import useEditStore from "@/store/editStore";
 
 const sideClass = styles['side-template']
 const compsClass = styles['comps']
+const compContainerClass = styles['comp-container']
 const compClass = styles['comp']
 const graphCompClass = styles['graph-comp']
 const compDraggingClass = styles['comp-dragging']
@@ -79,7 +80,7 @@ const GraphSider: React.FC = () => {
                     return (
                         <li
                             key={index}
-                            className={classNames(compClass, graphCompClass)}
+                            className={classNames(compContainerClass, graphCompClass)}
                             draggable
                             onDragStart={(e) => onCompDragStart(e, comp)}
                             onDragEnd={onCompDragEnd}
@@ -94,7 +95,10 @@ const GraphSider: React.FC = () => {
                                 }
                             }
                         >
-                            {comp.value}
+                            <div className={compClass}>
+                                {comp.value}
+                            </div>
+                            
                         </li>
                     )
                 })}

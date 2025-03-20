@@ -13,11 +13,14 @@ const defaultTextCompStyle: CompStyle = {
     textDecoration: 'none',
     wordSpacing: '10px',
     wordBreak: 'break-all',
+    textWrap: 'wrap',
+    whiteSpace: 'pre-wrap',
     top: 0,
     left: 0
 }
 const SideClass = styles['side-template']
 const compsClass = styles['comps']
+const compContainerClass = styles['comp-container']
 const compClass = styles['comp']
 const compDraggingClass = styles['comp-dragging']
 const comps: IComp[] = [
@@ -67,7 +70,7 @@ const TextSide: React.FC = ({ }) => {
                     return (
                         <li
                             key={index}
-                            className={compClass}
+                            className={compContainerClass}
                             draggable
                             onDragStart={(e) => onCompDragStart(e, {
                                 type: 1,
@@ -77,7 +80,11 @@ const TextSide: React.FC = ({ }) => {
                             onDragEnd={(e) => onCompDragEnd(e)}
                             onClick={() => addComp({
                                 ...comp
-                            })}>{comp.name}
+                            })}
+                        >
+                            <div className={compClass}>
+                                {comp.name}
+                            </div>
                         </li>
                     )
                 })}
