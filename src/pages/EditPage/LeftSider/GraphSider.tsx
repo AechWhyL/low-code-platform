@@ -3,7 +3,8 @@ import { CompTypes } from "@/store/editStore";
 import type { IComp, CompStyle } from "@/store/editStore/types";
 import styles from "./leftSider.module.scss";
 import classNames from "classnames";
-import useEditStore from "@/store/editStore";
+import { addComp } from "@/store/editStore";
+
 const sideClass = styles['side-template']
 const compsClass = styles['comps']
 const compClass = styles['comp']
@@ -32,7 +33,7 @@ const comps: IComp[] = [
         value: '',
         style: {
             ...defaultGraphStyle,
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgbr(0,0,0,0)',
             borderWidth: 2,
             borderStyle: 'solid'
         }
@@ -42,14 +43,24 @@ const comps: IComp[] = [
         value: '',
         style: {
             ...defaultGraphStyle,
-            backgroundColor: 'tomato',
-            borderColor: 'tomato'
+            backgroundColor: 'rgb(255,0,0)',
+            borderColor: 'rgb(255,0,0)'
+        }
+    },
+    {
+        type: CompTypes.GRAPH,
+        value: '',
+        style: {
+            ...defaultGraphStyle,
+            backgroundColor: 'rgb(0,0,0)',
+            borderColor: 'rgb(0,0,0)',
+            borderRadius: '50%',
         }
     }
 ]
 
 const GraphSider: React.FC = () => {
-    const addComp = useEditStore((state) => state.addComp)
+    // const addComp = useEditStore((state) => state.addComp)
     const onCompDragStart = (e: React.DragEvent<HTMLElement>, data: {
         type: number,
         value?: string,
@@ -73,14 +84,13 @@ const GraphSider: React.FC = () => {
                             onDragStart={(e) => onCompDragStart(e, comp)}
                             onDragEnd={onCompDragEnd}
                             onClick={() => addComp({
-                                type: CompTypes.GRAPH,
-                                value: comp.value,
-                                style: comp.style,
+                                ...comp
                             })}
                             style={
                                 {
                                     backgroundColor: comp.style.backgroundColor,
                                     borderColor: comp.style.borderColor,
+                                    borderRadius: comp.style.borderRadius,
                                 }
                             }
                         >

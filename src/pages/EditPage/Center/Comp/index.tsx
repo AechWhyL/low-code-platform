@@ -19,8 +19,8 @@ const Comp: React.FC<React.PropsWithChildren<CompProps>> = (props) => {
     const { comp, index, isSelected } = props
     const compKey = comp.key
     const compWithoutKey = omit(comp, ["key"])
-    const outerStyle = pick(comp.style, ["width", "height", "left", "top", "position"])
-    const innerStyle = omit(comp.style, ["width", "height", "left", "top", "position"])
+    const outerStyle = pick(comp.style, ["width", "height", "left", "top", "position", "zIndex"])
+    const innerStyle = omit(comp.style, ["width", "height", "left", "top", "position", "zIndex"])
     const handleCompClick = (e: React.MouseEvent) => {
         e.stopPropagation()
         if (e.metaKey || e.ctrlKey) {
@@ -33,7 +33,7 @@ const Comp: React.FC<React.PropsWithChildren<CompProps>> = (props) => {
     return (
         <div
             className={classNames(mainClass, isSelected && selectedClass)}
-            style={{ zIndex: index, ...outerStyle }}
+            style={{ ...outerStyle }}
             onClick={handleCompClick}
         >
             <div className={innerClass} style={{ ...innerStyle }} >

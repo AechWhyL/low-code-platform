@@ -2,7 +2,15 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { enableMapSet } from "immer";
 import { getUniqueKey } from "@/utils/index";
-import type { EditStoreState, EditStoreAction, ICanvas, IComp } from "./types";
+import { addHistory, undo, redo } from "./historySlice";
+
+import type {
+  EditStoreState,
+  EditStoreAction,
+  ICanvas,
+  IComp,
+  CompStyle,
+} from "./types";
 
 const getDefaultCanvas = (): ICanvas => {
   return {
@@ -26,21 +34,19 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
   immer((set) => ({
     canvas: getDefaultCanvas(),
     selectedIndexs: new Set(),
-    addComp: (comp: IComp) => {
-      set((draft) => {
-        draft.canvas.comps.push({
-          ...comp,
-          key: getUniqueKey(),
-        });
-        draft.selectedIndexs.add(draft.canvas.comps.length - 1);
-      });
-    },
+    maxHistory: 100,
+    historyIndex: 0,
+    history: [{ canvas: getDefaultCanvas(), seletedIndexs: new Set() }],
+    debounceHistoryTemp: null,
+    
     clearCanvas: () => {
       set((draft) => {
         draft.canvas = getDefaultCanvas();
         draft.selectedIndexs.clear();
+        addCanvasHistory(draft);
       });
     },
+
     setCompSelected: (clear: boolean, ...args) => {
       set((draft) => {
         if (clear) {
@@ -57,8 +63,10 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
             draft.selectedIndexs.add(index);
           }
         });
+        addCanvasHistory(draft);
       });
     },
+
     moveCompByDistance: (x: number, y: number) => {
       set((draft) => {
         draft.selectedIndexs.forEach((index) => {
@@ -66,21 +74,88 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
           comp.style.left! += x;
           comp.style.top! += y;
         });
+        addCanvasHistory(draft);
       });
     },
+
     resizeComp: (vector) => {
       set((draft) => {
         draft.selectedIndexs.forEach((index) => {
           const comp = draft.canvas.comps[index];
-          comp.style.width += vector.widthDiff;
-          comp.style.height += vector.heightDiff;
+          const resizeWidth = comp.style.width + vector.widthDiff;
+          comp.style.width = resizeWidth < 20 ? 20 : resizeWidth;
+          const resizeHeight = comp.style.height + vector.heightDiff;
+          comp.style.height = resizeHeight < 20 ? 20 : resizeHeight;
           comp.style.left += vector.leftDiff;
           comp.style.top += vector.topDiff;
         });
+        addCanvasHistory(draft);
+      });
+    },
+
+    updateComp: (props?, newStyle?: Partial<CompStyle>) => {
+      set((draft) => {
+        if (props) {
+          draft.selectedIndexs.forEach((index) => {
+            const comp = draft.canvas.comps[index];
+            Object.assign(comp, props);
+          });
+        }
+        if (newStyle) {
+          draft.selectedIndexs.forEach((index) => {
+            const comp = draft.canvas.comps[index];
+            comp.style = {
+              ...comp.style,
+              ...newStyle,
+            };
+          });
+        }
+        addCanvasHistory(draft);
+      });
+    },
+    updateCanvas(title, newStyle) {
+      set((draft) => {
+        if (title !== undefined && title !== null) {
+          draft.canvas.title = title;
+        }
+        if (newStyle) {
+          draft.canvas.style = {
+            ...draft.canvas.style,
+            ...newStyle,
+          };
+        }
+        addCanvasHistory(draft);
       });
     },
   }))
 );
+
+export const undoCanvas = () => {
+  useEditStore.setState((draft) => undo(draft));
+};
+
+export const addComp = (comp: IComp) => {
+  useEditStore.setState((draft) => {
+    draft.canvas.comps.push({
+      ...comp,
+      key: getUniqueKey(),
+      style: {
+        ...comp.style,
+        zIndex: draft.canvas.comps.length,
+      },
+    });
+    draft.selectedIndexs.add(draft.canvas.comps.length - 1);
+    addCanvasHistory(draft);
+  });
+};
+
+export const addCanvasHistory = (draft: EditStoreState) => {
+  addHistory(draft);
+};
+
+export const redoCanvas = () => {
+  useEditStore.setState((draft) => redo(draft));
+};
 
 export const CompTypes = {
   TEXT: 1,

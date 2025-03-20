@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./leftSider.module.scss";
-import useEditStore from "@/store/editStore";
+import { addComp } from "@/store/editStore";
 import { CompTypes } from "@/store/editStore";
-import type { CompStyle } from "@/store/editStore/types";
+import type { CompStyle, IComp } from "@/store/editStore/types";
 
 const defaultTextCompStyle: CompStyle = {
     width: 170,
@@ -12,6 +12,7 @@ const defaultTextCompStyle: CompStyle = {
     fontSize: 'normal',
     textDecoration: 'none',
     wordSpacing: '10px',
+    wordBreak: 'break-all',
     top: 0,
     left: 0
 }
@@ -19,37 +20,34 @@ const SideClass = styles['side-template']
 const compsClass = styles['comps']
 const compClass = styles['comp']
 const compDraggingClass = styles['comp-dragging']
-const comps: {
-    name: string,
-    value: string,
-    style: CompStyle
-}[] = [
-        {
-            name: '标题',
-            value: '双击编辑标题',
-            style: {
-                ...defaultTextCompStyle,
-                fontSize: 20,
-                height: 50,
-                lineHeight: '50px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                color: '#000',
-            }
-        },
-        {
-            name: "正文",
-            value: "双击编辑正文",
-            style: {
-                ...defaultTextCompStyle,
-                fontSize: "16px",
-                fontWeight: "normal",
-                color: "#000",
-            }
-        },
-    ]
+const comps: IComp[] = [
+    {
+        name: '标题',
+        value: '双击编辑标题',
+        type: CompTypes.TEXT,
+        style: {
+            ...defaultTextCompStyle,
+            fontSize: 20,
+            height: 50,
+            lineHeight: '50px',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: '#000',
+        }
+    },
+    {
+        name: "正文",
+        value: "双击编辑正文",
+        type: CompTypes.TEXT,
+        style: {
+            ...defaultTextCompStyle,
+            fontSize: "16px",
+            fontWeight: "normal",
+            color: "#000",
+        }
+    },
+]
 const TextSide: React.FC = ({ }) => {
-    const addComp = useEditStore((state) => state.addComp)
     const onCompDragStart = (e: React.DragEvent<HTMLElement>, data: {
         type: number,
         value?: string,
@@ -77,9 +75,7 @@ const TextSide: React.FC = ({ }) => {
                             })}
                             onDragEnd={(e) => onCompDragEnd(e)}
                             onClick={() => addComp({
-                                type: CompTypes.TEXT,
-                                value: comp.value,
-                                style: comp.style,
+                                ...comp
                             })}>{comp.name}
                         </li>
                     )

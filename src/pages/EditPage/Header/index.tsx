@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./index.module.scss";
 import useEditStore from "@/store/editStore";
+import { undoCanvas, redoCanvas } from "@/store/editStore";
 const EditHeaderClass = styles['edit-header-container']
 const EditHeaderItemClass = styles['edit-header-item']
 const EditHeader: React.FC = () => {
@@ -13,10 +14,10 @@ const EditHeader: React.FC = () => {
             <div className={EditHeaderItemClass}>
                 <span>保存</span>
             </div>
-            <div className={EditHeaderItemClass}>
+            <div className={EditHeaderItemClass} onClick={undoCanvas}>
                 <span>上一步</span>
             </div>
-            <div className={EditHeaderItemClass}>
+            <div className={EditHeaderItemClass} onClick={redoCanvas}>
                 <span>下一步</span>
             </div>
             <div className={EditHeaderItemClass} onClick={clearCanvas}>

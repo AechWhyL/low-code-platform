@@ -1,7 +1,16 @@
 .main {
   position: absolute;
-  border: 1px solid red;
+  outline: 1px dashed red;
 
   cursor: move;
-//   pointer-events: none;
+  //   pointer-events: none;
+
+  textarea {
+    resize: none;
+    outline: none;
+    border: none;
+    &:-webkit-focus-visible {
+      outline: none;
+    }
+  }
 }

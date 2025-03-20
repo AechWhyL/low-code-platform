@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import styles from "./index.module.scss";
-import useEditStore from "@/store/editStore";
+import useEditStore,{addComp} from "@/store/editStore";
 import type { IComp } from "@/store/editStore/types";
 import Comp from "../Comp";
 import EditBox from "../EditBox";
@@ -10,10 +10,8 @@ const CanvasClass = styles['canvas']
 const Canvas: React.FC = () => {
 
     const canvas = useEditStore((state) => state.canvas);
-    const addComp = useEditStore((state) => state.addComp)
     const selectedIndexs = useEditStore((state) => state.selectedIndexs)
     const zoom = useZoomStore((state) => state.zoom)
-
     const canvasRef = useRef<HTMLDivElement | null>(null)
     const onDrop = (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault()

@@ -3,5 +3,41 @@
   right: 0;
   top: 64px;
   height: 100vh;
-  width: 200px;
+  background-color: #fff;
+  box-shadow: -5px 0 5px #e6e6e6;
+  z-index: 100;
+  transition: max-width 0.5s ease;
+  max-width: 200px;
+  &.hidden   {
+    max-width: 0px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 1.5em;
+    color: #8a8a8a;
+    cursor: pointer;
+    border-left: 1px solid #8a8a8a;
+    border-radius: 50%;
+  }
+}
+
+.prop-box {
+  width: 100%;
+  padding: 0 5px 0 10px;
+  border-radius: 5px;
+  & > .prop-title {
+    display: inline-block;
+    font-size: 1em;
+    color: #8a8a8a;
+    padding-bottom: 2px;
+  }
 }

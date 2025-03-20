@@ -25,7 +25,7 @@ const Zoom: React.FC = () => {
     return <div className={mainClass}>
         <span
             className={btnClass}
-            style={{ left: 0, transform: 'translate(-100%,-50%)' }}
+            style={{ left: 0, transform: 'translate(-100%,-50%)', cursor: 'zoom-out' }}
             onClick={() => handleZoomOut()}
         >-</span>
         <Slider
@@ -37,7 +37,7 @@ const Zoom: React.FC = () => {
         />
         <span
             className={btnClass}
-            style={{ right: 0, transform: 'translate(100%,-50%)' }}
+            style={{ right: 0, transform: 'translate(100%,-50%)',cursor:'zoom-in' }}
             onClick={() => handleZoomIn()}
         >+</span>
     </div>
