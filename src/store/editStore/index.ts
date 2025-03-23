@@ -9,6 +9,7 @@ import type {
   EditStoreAction,
   ICanvas,
   CompStyle,
+  IComp,
 } from "./types";
 import { debounce } from "lodash-es";
 
@@ -38,17 +39,37 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
     historyIndex: 0,
     history: [{ canvas: getDefaultCanvas(), seletedIndexs: new Set() }],
 
-    addComp: (comp) => {
+    addComp: (...comps) => {
       set((draft) => {
-        draft.canvas.comps.push({
-          ...comp,
-          key: getUniqueKey(),
-          style: {
-            ...comp.style,
-            zIndex: draft.canvas.comps.length,
-          },
+        comps.forEach((comp) => {
+          draft.canvas.comps.push({
+            ...comp,
+            key: getUniqueKey(),
+            style: {
+              ...comp.style,
+              zIndex: draft.canvas.comps.length,
+            },
+          });
+          draft.selectedIndexs.add(draft.canvas.comps.length - 1);
         });
-        draft.selectedIndexs.add(draft.canvas.comps.length - 1);
+        addCanvasHistory();
+      });
+    },
+
+    deleteComps: (...indexs) => {
+      set((draft) => {
+        const newComps = draft.canvas.comps.filter((comp, index) => {
+          return !indexs.includes(index);
+        });
+        draft.canvas.comps = newComps;
+        const newSelectedIndexs = new Set<number>();
+        draft.selectedIndexs.forEach((index) => {
+          if (indexs.includes(index)) {
+            return;
+          }
+          newSelectedIndexs.add(index);
+        });
+        draft.selectedIndexs = newSelectedIndexs;
         addCanvasHistory();
       });
     },
@@ -77,7 +98,6 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
             draft.selectedIndexs.add(index);
           }
         });
-        addCanvasHistory();
       });
     },
 
@@ -107,26 +127,40 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
       });
     },
 
-    updateComp: (props?, newStyle?: Partial<CompStyle>) => {
+    updateComp: (index, props?, newStyle?: Partial<CompStyle>) => {
       set((draft) => {
+        const comp = draft.canvas.comps[index];
         if (props) {
-          draft.selectedIndexs.forEach((index) => {
-            const comp = draft.canvas.comps[index];
-            Object.assign(comp, props);
-          });
+          Object.assign(comp, props);
         }
         if (newStyle) {
-          draft.selectedIndexs.forEach((index) => {
-            const comp = draft.canvas.comps[index];
-            comp.style = {
-              ...comp.style,
-              ...newStyle,
-            };
-          });
+          comp.style = {
+            ...comp.style,
+            ...newStyle,
+          };
         }
         addCanvasHistory();
       });
     },
+
+    updateSelected: (props?, newStyle?: Partial<CompStyle>) => {
+      set((draft) => {
+        draft.selectedIndexs.forEach((index) => {
+          const comp = draft.canvas.comps[index];
+          if (props) {
+            Object.assign(comp, props);
+          }
+          if (newStyle) {
+            comp.style = {
+              ...comp.style,
+              ...newStyle,
+            };
+          }
+        });
+        addCanvasHistory();
+      });
+    },
+
     updateCanvas(title, newStyle) {
       set((draft) => {
         if (title !== undefined && title !== null) {
@@ -144,6 +178,7 @@ const useEditStore = create<EditStoreState & EditStoreAction>()(
   }))
 );
 
+// histories
 export const undoCanvas = () => {
   useEditStore.setState((draft) => undo(draft));
 };
@@ -156,6 +191,57 @@ export const addCanvasHistory = debounce(() => {
 
 export const redoCanvas = () => {
   useEditStore.setState((draft) => redo(draft));
+};
+
+// cv
+const copyBuffer: IComp[] = [];
+export const copyComps = () => {
+  copyBuffer.length = 0;
+  useEditStore.getState().selectedIndexs.forEach((index) => {
+    const comp = useEditStore.getState().canvas.comps[index];
+    const { name, style, type, value, onClick } = comp;
+    copyBuffer.push({
+      name,
+      style,
+      type,
+      value,
+      onClick,
+    });
+  });
+};
+
+// left,top 均为粘贴的位置相对于canvas的left,top
+export const pasteComps = (pos?: { left: number; top: number }) => {
+  let offsetX = 50,
+    offsetY = 50;
+  if (pos) {
+    const { left, top } = pos;
+
+    //找出最左上方的组件作为锚点参照
+    const anchorComp = copyBuffer.reduce((min, comp) => {
+      if (
+        comp.style.left <= min.style.left &&
+        comp.style.top <= min.style.top
+      ) {
+        return comp;
+      }
+      return min;
+    });
+    offsetX = left - anchorComp.style.left;
+    offsetY = top - anchorComp.style.top;
+  }
+  const newComps = copyBuffer.map((comp) => {
+    return {
+      ...comp,
+      style: {
+        ...comp.style,
+        left: comp.style.left + offsetX,
+        top: comp.style.top + offsetY,
+      },
+    };
+  });
+  useEditStore.getState().setCompSelected(true);
+  useEditStore.getState().addComp(...newComps);
 };
 
 export const CompTypes = {

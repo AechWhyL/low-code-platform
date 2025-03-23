@@ -4,6 +4,7 @@ export interface CompStyle extends React.CSSProperties {
   height: number;
   top: number;
   left: number;
+  zIndex: number;
 }
 export interface CanvasStyle extends React.CSSProperties {
   width: number;
@@ -25,7 +26,7 @@ export interface IComp {
 }
 
 export interface ICompWithKey extends IComp {
-  key: number;
+  key: string;
 }
 
 // 画布状态
@@ -37,11 +38,13 @@ export type EditStoreState = {
   historyIndex: number;
 };
 
-export type AddCompFC = (comp: IComp) => void;
+export type AddCompFC = (...comp: IComp[]) => void;
+export type DelCompsFC = (...index: number[]) => void;
 
 // 画布action
 export type EditStoreAction = {
   addComp: AddCompFC;
+  deleteComps: DelCompsFC;
   clearCanvas: () => void;
   setCompSelected: (clear: boolean, ...indexes: number[]) => void;
   moveCompByDistance: (x: number, y: number) => void;
@@ -52,6 +55,11 @@ export type EditStoreAction = {
     heightDiff: number;
   }) => void;
   updateComp: <T extends keyof Omit<IComp, "type" | "style">>(
+    index: number,
+    props?: Partial<Record<T, IComp[T]>>,
+    newStyle?: Partial<CompStyle>
+  ) => void;
+  updateSelected: <T extends keyof Omit<IComp, "type" | "style">>(
     props?: Partial<Record<T, IComp[T]>>,
     newStyle?: Partial<CompStyle>
   ) => void;

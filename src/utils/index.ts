@@ -1,3 +1,4 @@
-export const getUniqueKey = (): number => {
-  return new Date().getTime();
+import { v4 } from "uuid";
+export const getUniqueKey = (): string => {
+  return v4();
 };

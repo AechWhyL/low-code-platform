@@ -11,7 +11,7 @@ const mainClass = styles['main']
 const EditBox: React.FC = () => {
     const comps = useEditStore((state) => state.canvas.comps)
     const zoom = useZoomStore((state) => state.zoom)
-    const updateComp = useEditStore((state) => state.updateComp)
+    const updateSelected = useEditStore((state) => state.updateSelected)
     const selectedIndexs = useEditStore((state) => state.selectedIndexs)
     const moveCompByDistance = useEditStore((state) => state.moveCompByDistance)
 
@@ -100,9 +100,9 @@ const EditBox: React.FC = () => {
                         fontFamily: 'inherit',
 
                     }}
-                    onHeightChange={(height) => { updateComp(undefined, { height: height }) }}
+                    onHeightChange={(height) => { updateSelected(undefined, { height: height }) }}
                     onMouseDown={(e) => e.stopPropagation()}
-                    onChange={(e) => { updateComp({ value: e.currentTarget.value }) }}
+                    onChange={(e) => { updateSelected({ value: e.currentTarget.value }) }}
                 />}
             <Resizers zoom={zoom} width={width} height={height} />
         </div>

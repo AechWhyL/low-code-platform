@@ -1,10 +1,11 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./index.module.scss";
 import useEditStore from "@/store/editStore";
 import type { IComp } from "@/store/editStore/types";
 import Comp from "../Comp";
 import EditBox from "../EditBox";
 import useZoomStore from "@/store/zoomStore";
+
 const CanvasClass = styles['canvas']
 
 const Canvas: React.FC = () => {
@@ -14,6 +15,7 @@ const Canvas: React.FC = () => {
     const addComp = useEditStore((state) => state.addComp)
     const zoom = useZoomStore((state) => state.zoom)
     const canvasRef = useRef<HTMLDivElement | null>(null)
+
     const onDrop = (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault()
         if (!canvasRef.current) return
@@ -24,7 +26,7 @@ const Canvas: React.FC = () => {
         const comp = data as unknown as IComp
 
         const width = comp.style.width * zoom / 100 as number
-        const height = comp.style.height * zoom /100 as number
+        const height = comp.style.height * zoom / 100 as number
 
         const { pageX, pageY } = event
         const canvasTop = canvasRef.current.getBoundingClientRect().top + window.scrollY
@@ -36,7 +38,15 @@ const Canvas: React.FC = () => {
         comp.style.top = destY * (100 / zoom)
         addComp(comp)
     }
+
     console.log("canvas rendered")
+
+    useEffect(() => {
+        if (canvasRef.current) {
+            canvasRef.current.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' })
+        }
+    }, [])
+
     return (
         <div
             className={CanvasClass}
@@ -45,6 +55,7 @@ const Canvas: React.FC = () => {
                 ...canvas.style,
                 transform: `scale(${zoom / 100})`
             }}
+            id="canvas"
             onDragOver={(e) => { e.preventDefault() }}
             onDrop={onDrop}
         >

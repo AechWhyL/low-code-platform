@@ -1,6 +1,19 @@
 .center {
   position: relative;
-  overflow: "auto";
+  overflow: scroll;
   height: 100%;
   flex-grow: 1;
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 1px solid #fff;
+    border-radius: 6px;
+    background: #8c8c8c;
+  }
+  .canvas-container {
+    box-sizing: content-box;
+    padding: 1000px;
+  }
 }

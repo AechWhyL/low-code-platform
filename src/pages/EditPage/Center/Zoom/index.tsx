@@ -22,6 +22,7 @@ const Zoom: React.FC = () => {
     const handleZoomIn = useCallback(() => {
         zoomIn()
     }, [zoomIn])
+    console.log('zoom rendered')
     return <div className={mainClass}>
         <span
             className={btnClass}

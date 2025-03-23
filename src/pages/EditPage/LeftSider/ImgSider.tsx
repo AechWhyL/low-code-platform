@@ -21,7 +21,8 @@ const defaultImgStyle: CompStyle = {
     width: 120,
     height: 120,
     top: 0,
-    left: 0
+    left: 0,
+    zIndex: 0,
 }
 
 const comps: IComp[] = [

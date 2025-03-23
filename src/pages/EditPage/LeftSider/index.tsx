@@ -4,6 +4,7 @@ import styles from "./index.module.scss";
 import TextSider from "./TextSider";
 import GraphSider from "./GraphSider";
 import ImgSider from "./ImgSider";
+
 const menuItems: {
     title: string,
 }[] = [

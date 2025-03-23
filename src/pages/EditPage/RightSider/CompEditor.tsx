@@ -15,7 +15,7 @@ type ColorOnChange = GetProp<ColorPickerProps, 'onChange'>;
 
 const CompEditor: React.FC<Props> = ({ comp }) => {
     const { style } = comp
-    const updateComp = useEditStore((state) => state.updateComp)
+    const updateSelected = useEditStore((state) => state.updateSelected)
     const handleCompStyleChange = useCallback(<T extends keyof (React.CSSProperties)>(value: number | string | null, prop: T) => {
         if (!value) return
         const newStyle: Partial<CompStyle> = {}
@@ -37,17 +37,17 @@ const CompEditor: React.FC<Props> = ({ comp }) => {
 
         }
         newStyle[prop] = value as CompStyle[T]
-        updateComp(undefined, newStyle)
+        updateSelected(undefined, newStyle)
 
-    }, [updateComp])
+    }, [updateSelected])
 
     const handleColorPick: ColorOnChange = throttle((color) => {
-        updateComp(undefined, { backgroundColor: color.toHexString() })
+        updateSelected(undefined, { backgroundColor: color.toHexString() })
     }, 50)
 
     const handleCompPropChange = <T extends keyof Omit<IComp, 'style' | 'type'>>(propKey: T, value: IComp[T]) => {
         if (value !== undefined && value !== null) {
-            updateComp({ [propKey]: value })
+            updateSelected({ [propKey]: value })
         }
     }
 

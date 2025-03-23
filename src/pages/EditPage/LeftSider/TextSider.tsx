@@ -16,7 +16,8 @@ const defaultTextCompStyle: CompStyle = {
     textWrap: 'wrap',
     whiteSpace: 'pre-wrap',
     top: 0,
-    left: 0
+    left: 0,
+    zIndex: 1,
 }
 const SideClass = styles['side-template']
 const compsClass = styles['comps']

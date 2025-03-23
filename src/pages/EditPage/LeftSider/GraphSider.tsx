@@ -18,7 +18,8 @@ const defaultGraphStyle: CompStyle = {
     borderColor: "#62beff",
     backgroundColor: "#62beff",
     top: 0,
-    left: 0
+    left: 0,
+    zIndex: 1,
 }
 
 const comps: IComp[] = [
