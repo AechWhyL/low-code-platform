@@ -33,7 +33,7 @@ const Comp: React.FC<React.PropsWithChildren<CompProps>> = (props) => {
     return (
         <div
             className={classNames(mainClass, isSelected && selectedClass)}
-            style={{ ...outerStyle }}
+            style={{ ...outerStyle, zIndex: index }}
             onClick={handleCompClick}
         >
             <div className={innerClass} style={{ ...innerStyle }} >

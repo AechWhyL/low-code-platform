@@ -79,7 +79,7 @@ const Center: React.FC = () => {
                 height: canvasStyle.height * zoom / 100,
                 width: canvasStyle.width * zoom / 100,
             }}>
-                {isMenuShow && <Menu onMenuItemClick={handleMenuItemClick} left={menuLeft} top={menuTop} />}
+                <Menu onMenuItemClick={handleMenuItemClick} visible={isMenuShow} left={menuLeft} top={menuTop} />
                 <Canvas />
                 <Zoom />
             </div>

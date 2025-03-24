@@ -17,7 +17,7 @@ const defaultTextCompStyle: CompStyle = {
     whiteSpace: 'pre-wrap',
     top: 0,
     left: 0,
-    zIndex: 1,
+    zIndex: 0,
 }
 const SideClass = styles['side-template']
 const compsClass = styles['comps']

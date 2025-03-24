@@ -244,6 +244,84 @@ export const pasteComps = (pos?: { left: number; top: number }) => {
   useEditStore.getState().addComp(...newComps);
 };
 
+export const layerUp = () => {
+  useEditStore.setState((draft) => {
+    const { canvas, selectedIndexs } = draft;
+    const len = canvas.comps.length;
+    if (selectedIndexs.size === len) {
+      return;
+    }
+    for (let i = len - 1; i >= 0; i--) {
+      if (i + 1 < len && selectedIndexs.has(i) && !selectedIndexs.has(i + 1)) {
+        const temp = canvas.comps[i];
+        canvas.comps[i] = canvas.comps[i + 1];
+        canvas.comps[i + 1] = temp;
+        selectedIndexs.delete(i);
+        selectedIndexs.add(i + 1);
+      }
+    }
+  });
+};
+
+export const layerDown = () => {
+  useEditStore.setState((draft) => {
+    const { canvas, selectedIndexs } = draft;
+    const len = canvas.comps.length;
+    if (selectedIndexs.size === len) {
+      return;
+    }
+    for (let i = 0; i < len; i++) {
+      if (i - 1 >= 0 && selectedIndexs.has(i) && !selectedIndexs.has(i - 1)) {
+        const temp = canvas.comps[i];
+        canvas.comps[i] = canvas.comps[i - 1];
+        canvas.comps[i - 1] = temp;
+        selectedIndexs.delete(i);
+        selectedIndexs.add(i - 1);
+      }
+    }
+  });
+};
+
+export const layerTop = () => {
+  useEditStore.setState((draft) => {
+    const { canvas, selectedIndexs } = draft;
+    const len = canvas.comps.length;
+    const insertIndex = len - 1;
+    for (let i = len - 1; i >= 0; i--) {
+      if (selectedIndexs.has(i)) {
+        // 移至末尾
+        const t = canvas.comps.splice(i, 1);
+        canvas.comps.splice(insertIndex, 0, ...t);
+      }
+    }
+    const selectedSize = selectedIndexs.size;
+    selectedIndexs.clear();
+    for (let i = len - selectedSize; i < len; i++) {
+      selectedIndexs.add(i);
+    }
+  });
+};
+
+export const layerBottom = () => {
+  useEditStore.setState((draft) => {
+    const { canvas, selectedIndexs } = draft;
+    const len = canvas.comps.length;
+    const insertIndex = 0;
+    for (let i = 0; i < len; i++) {
+      if (selectedIndexs.has(i)) {
+        // 移至开头
+        const t = canvas.comps.splice(i, 1);
+        canvas.comps.splice(insertIndex, 0, ...t);
+      }
+    }
+    const selectedSize = selectedIndexs.size;
+    selectedIndexs.clear();
+    for (let i = 0; i < selectedSize; i++) {
+      selectedIndexs.add(i);
+    }
+  });
+};
+
 export const CompTypes = {
   TEXT: 1,
   IMG: 2,

@@ -1,23 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./index.module.scss";
-import useEditStore, { copyComps, pasteComps } from "@/store/editStore";
+import useEditStore, { copyComps, pasteComps, layerUp, layerDown, layerTop, layerBottom } from "@/store/editStore";
 import useZoomStore from "@/store/zoomStore";
 
 const MenuClass = styles['menu']
 const MenuItemClass = styles['menu-item']
+const titleClass = styles['title']
+const shortcutClass = styles['shortcut']
 
 type MenuProps = {
     left: number,
     top: number,
+    visible: boolean,
     onMenuItemClick: (e: React.MouseEvent) => void,
 }
 
-const Menu: React.FC<MenuProps> = ({ left, top, onMenuItemClick }) => {
+const Menu: React.FC<MenuProps> = ({ left, top, onMenuItemClick, visible }) => {
     console.log('menu rendered', left, top)
 
     const selectedIndexs = useEditStore((state) => state.selectedIndexs)
-    const updateComp = useEditStore((state) => state.updateComp)
-    const updateSelected = useEditStore((state) => state.updateSelected)
     const setSelected = useEditStore((state) => state.setCompSelected)
     const canvas = useEditStore((state) => state.canvas)
     const deleteComps = useEditStore((state) => state.deleteComps)
@@ -32,45 +33,20 @@ const Menu: React.FC<MenuProps> = ({ left, top, onMenuItemClick }) => {
         onMenuItemClick(e)
     }
 
-    const handleLayerChange = (e: React.MouseEvent, change: number | 'top' | 'bottom') => {
-        e.preventDefault()
-        if (typeof change === 'number') {
-            selectedIndexs.forEach((index) => {
-                const comp = canvas.comps[index]
-                let zIndex = comp.style.zIndex
-                zIndex += change
-                updateComp(index, undefined, { zIndex })
-            })
-        } else if (change === 'top') {
-            const zIndex = canvas.comps.reduce((max, comp) => {
-                return max.style.zIndex > comp.style.zIndex ? max : comp
-            }).style.zIndex + 1
-            console.log(zIndex)
-            updateSelected(undefined, { zIndex })
-        } else if (change === 'bottom') {
-            const zIndex = canvas.comps.reduce((min, comp) => {
-                return min.style.zIndex < comp.style.zIndex ? min : comp
-            }).style.zIndex - 1
-            updateSelected(undefined, { zIndex })
-        }
-    }
-
-    const handleSelectAll = (e: React.MouseEvent) => {
-        e.preventDefault()
+    const handleSelectAll = () => {
         const indexs = Array.from({ length: canvas.comps.length }, (_, i) => i)
         setSelected(true, ...indexs)
     }
 
-    const handleCopy = (e: React.MouseEvent) => {
-        e.preventDefault()
+    const handleCopy = () => {
         console.log('copy clicked')
         copyComps()
     }
 
-    const handlePaste = (e: React.MouseEvent) => {
-        e.preventDefault()
+    const handlePaste = () => {
         const canvas = document.querySelector('#canvas')
         if (!canvas) {
+            console.log('canvas not found')
             return
         }
         const canvasLeft = canvas.getBoundingClientRect().left + window.scrollX
@@ -86,36 +62,87 @@ const Menu: React.FC<MenuProps> = ({ left, top, onMenuItemClick }) => {
         pasteComps({ left, top })
     }
 
-    const handleDelComps = (e: React.MouseEvent) => {
-        e.preventDefault()
+    const handleDelComps = () => {
         deleteComps(...Array.from(selectedIndexs))
         console.log('delete clicked')
     }
 
-    return <div className={MenuClass} style={{ left, top }} ref={menuRef} onClick={handleMenuClick}>
-        <div className={MenuItemClass} onClick={handleDelComps}>
-            <span>删除</span>
+    const menuStyle: React.CSSProperties = {
+        left,
+        top,
+    }
+    if (!visible) {
+        menuStyle.display = 'none'
+    }
+
+    useEffect(() => {
+        console.log('menu mounted')
+        const handleShortcut = (e: KeyboardEvent) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (e.code === "Backspace") {
+                handleDelComps()
+                return
+            }
+            if (e.metaKey || e.ctrlKey) {
+                switch (e.code) {
+                    case "KeyC":
+                        handleCopy()
+                        break;
+                    case "KeyA":
+                        handleSelectAll()
+                        break;
+                    case "KeyV":
+                        pasteComps()
+                        break;
+                    case "ArrowUp":
+                        layerUp()
+                        break;
+                    case "ArrowDown":
+                        layerDown()
+                        break;
+                }
+            }
+        }
+        const canvasArea = document.querySelector('#canvas-area') as HTMLElement
+        console.log(canvasArea)
+        canvasArea?.addEventListener('keydown', handleShortcut)
+        return () => {
+            console.log('menu unmounted')
+            canvasArea?.removeEventListener('keydown', handleShortcut)
+        }
+    })
+
+    return <div className={MenuClass} style={menuStyle} ref={menuRef} onClick={handleMenuClick}>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); handleCopy() }}>
+            <span className={titleClass}>复制</span>
+            <span className={shortcutClass}>Ctrl + C</span>
         </div>
-        <div className={MenuItemClass} onClick={handleSelectAll}>
-            <span>全选</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); handlePaste() }}>
+            <span className={titleClass}>粘贴</span>
+            <span className={shortcutClass}>Ctrl + V</span>
         </div>
-        <div className={MenuItemClass} onClick={(e) => handleLayerChange(e, 'top')}>
-            <span>置顶</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); handleDelComps() }}>
+            <span className={titleClass}>删除</span>
+            <span className={shortcutClass}>Backspace</span>
         </div>
-        <div className={MenuItemClass} onClick={(e) => handleLayerChange(e, 'bottom')}>
-            <span>置底</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); handleSelectAll() }}>
+            <span className={titleClass}>全选</span>
+            <span className={shortcutClass}>Ctrl + A</span>
         </div>
-        <div className={MenuItemClass} onClick={(e) => handleLayerChange(e, 1)}>
-            <span>上移一层</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); layerTop() }}>
+            <span className={titleClass}>置顶</span>
         </div>
-        <div className={MenuItemClass} onClick={(e) => handleLayerChange(e, -1)}>
-            <span>下移一层</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); e.preventDefault(); layerBottom() }}>
+            <span className={titleClass}>置底</span>
         </div>
-        <div className={MenuItemClass} onClick={handleCopy}>
-            <span>复制</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); layerUp() }}>
+            <span className={titleClass}>上移一层</span>
+            <span className={shortcutClass}>CTRL + ↑</span>
         </div>
-        <div className={MenuItemClass} onClick={handlePaste}>
-            <span>粘贴</span>
+        <div className={MenuItemClass} onClick={(e) => { e.preventDefault(); layerDown() }}>
+            <span className={titleClass}>下移一层</span>
+            <span className={shortcutClass}>CTRL + ↓</span>
         </div>
     </div>
 }

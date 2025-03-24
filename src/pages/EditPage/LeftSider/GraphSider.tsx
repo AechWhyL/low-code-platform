@@ -19,7 +19,7 @@ const defaultGraphStyle: CompStyle = {
     backgroundColor: "#62beff",
     top: 0,
     left: 0,
-    zIndex: 1,
+    zIndex: 0,
 }
 
 const comps: IComp[] = [

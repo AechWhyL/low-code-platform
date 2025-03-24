@@ -127,15 +127,6 @@ const CompEditor: React.FC<Props> = ({ comp }) => {
                         onChange={(value) => handleCompStyleChange(value, 'top')} />
                 </PropBox>
             </PropBox>
-            <PropBox title="层级">
-                <InputNumber
-                    value={style.zIndex}
-                    style={{ width: '100%' }}
-                    step={1}
-                    min={0}
-                    onChange={(value) => handleCompStyleChange(value, 'zIndex')}
-                />
-            </PropBox>
             <PropBox title="背景颜色:">
                 <ColorPicker
                     value={style.backgroundColor?.toString()}
